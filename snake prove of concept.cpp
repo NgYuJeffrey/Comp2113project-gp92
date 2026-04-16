@@ -11,11 +11,12 @@ using namespace std;
 
 //if this needs to be submitted
 //1. file input and output (highscore)
-//2. difficulty setting (speed? board size? alt mechanic?)
+//2. difficulty setting (easy:wall looping / hard:accleration)
+//2.5. menu (should be fine)
 //3. bugfix
-//4. optimization of snake body presentation (optimal)(it'll look better)
-//5. seperation of files (i hate makefile)
-//6. comments for each section of code (honestly fair)
+//4. optimization of snake body presentation (optional)(it'll look better)
+//5. seperation of files (i hate makefile) (save a few days for this)
+//6. comments for each section of code
 char userput=' '; //accepted input
 char bor=' '; //input buffer
 char validput[5]= {' ','w','a','s','d'}; //input list
@@ -42,7 +43,7 @@ int dirgate=2; //ban direction (0:updown 1:leftright)
 bool loopin=true;
 
 bool deathdetect() { //dead
-	if(biowaste[head[0]][head[1]].status[0]%2==1) {
+	if(biowaste[head[0]][head[1]].status[0]%2==1) { //needs adjustment for easy mode check
 		return 0;
 	} else {
 		return 1;
@@ -99,7 +100,7 @@ void shootboard() { // print the board
 
 void abalode() { //timed fuction, detect, update and mkove snake
 	while(loopin) {
-		this_thread::sleep_for(100ms);
+		this_thread::sleep_for(100ms); // hardmode speed implant
 		clearformat();
 		if (userput=='w') {
 			head[0]--;
@@ -129,7 +130,7 @@ void abalode() { //timed fuction, detect, update and mkove snake
 }
 
 int main() {
-	cout<<"ready for snake game? (wasd to turn snake)";
+	cout<<"ready for snake game? (wasd to turn snake)"; //update menu and read file
 	bor=getch();
 	thread navi(abalode);
 	navi.detach(); //automoves
@@ -144,6 +145,6 @@ int main() {
 			}
 		}
 	} // read input
-	return 0; //works now
+	return 0; //file output
 
 }
