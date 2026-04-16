@@ -7,27 +7,30 @@
 #include <stdio.h> //idk
 #include <list> //flexable
 #include <stdlib.h> //randomness
+#include <curses.h> //more linux compatibility stuff
 using namespace std;
 
 //if this needs to be submitted
-//1. file input and output (highscore)
-//2. difficulty setting (easy:wall looping / hard:accleration)
-//2.5. menu (should be fine)
-//3. bugfix
-//4. optimization of snake body presentation (optional)(it'll look better)
+//1. file input and output (highscore for each mode)
+//2. menu (should be fine)
+// -----------------------------
+//3. difficulty setting (easy:wall looping / hard:accleration)
+//4. linux compatability (fuckkkkk)
+//4.5. optimization of snake body presentation (optional)(it'll look better)
+//------------------------------
 //5. seperation of files (i hate makefile) (save a few days for this)
 //6. comments for each section of code
 char userput=' '; //accepted input
 char bor=' '; //input buffer
 char validput[5]= {' ','w','a','s','d'}; //input list
 int q=0; //uhh
-char blocks[99]= {' ','X','$','O','T'};
+char blocks[99]= {' ','X','$','O','T'};//symbols shown
 struct boardstruct {
 	char display;
 	int status[3]; //condition,in,out
 };
-boardstruct biowaste[21][21];
-int head[2]= {11,11};
+boardstruct biowaste[21][21];//board
+int head[2]= {11,11};//snake head location
 struct snakelike {
 	int cordx;
 	int cordy;
@@ -40,7 +43,7 @@ struct snakelike {
 list<snakelike> snakey;
 string fullboard;
 int dirgate=2; //ban direction (0:updown 1:leftright)
-bool loopin=true;
+bool loopin=true; // im going to be so fr this detection is subpar
 
 bool deathdetect() { //dead
 	if(biowaste[head[0]][head[1]].status[0]%2==1) { //needs adjustment for easy mode check
@@ -69,7 +72,7 @@ void pelletdrop() { // spawn pellet on blank space
 		pellety=(rand() % 19)+1;
 	} while (biowaste[pellety][pelletx].status[0]!=0);
 	biowaste[pellety][pelletx].status[0]=2;
-} //need to add exception handling for snake body
+} 
 
 void setboard() { //reset the board
 	for(int i=0; i<21; i++) {
@@ -114,7 +117,7 @@ void abalode() { //timed fuction, detect, update and mkove snake
 		} else if (userput=='d') {
 			head[1]++;
 			dirgate=0;
-		}
+		} //i am sure there is a better way for this
 		if (biowaste[head[0]][head[1]].status[0]==2) {
 			pelletdrop();
 		} else {
@@ -130,7 +133,7 @@ void abalode() { //timed fuction, detect, update and mkove snake
 }
 
 int main() {
-	cout<<"ready for snake game? (wasd to turn snake)"; //update menu and read file
+	cout<<"ready for snake game? (wasd to turn snake)"; //update menu and read file here
 	bor=getch();
 	thread navi(abalode);
 	navi.detach(); //automoves
