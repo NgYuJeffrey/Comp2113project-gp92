@@ -64,6 +64,17 @@ void clearformat() { //this actually still doesnt work on linux because getch
 #endif
 }
 
+void inputstyle(){
+#ifdef _WIN32 || _WIN64
+	bor=getch();
+#elif __linux__
+	cin>>bor;
+#else
+	cout<<"imcompatable";
+#endif
+}
+
+
 
 void pelletdrop() { // spawn pellet on blank space
 	srand(time(0));
@@ -149,14 +160,14 @@ void abalode() { //timed fuction, detect, update and mkove snake
 int main() {
 	//input file here
 	cout<<"ready for snake game? (wasd to turn snake)"; //menu here
-	bor=getch();
+	inputstyle();
 	thread navi(abalode);
 	navi.detach(); //automoves
 	setboard();
 	snakey.push_front(snakelike(head[1],head[0]));
 
 	while (loopin) {
-		bor=getch();
+		inputstyle();
 		for (int i=1; i<5; i++) {
 			if(bor==validput[i] and i%2!=dirgate) {
 				userput=bor;
