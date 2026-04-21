@@ -9,6 +9,41 @@
 #include <stdlib.h> //randomness
 using namespace std;
 
+#include <fstream> // Part 1: File IO
+#if __linux__
+#include <termios.h>
+#include <unistd.h>
+// Custom getch for Linux
+int getch() {
+    struct termios oldt, newt;
+    int ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
+}
+#endif
+
+int highscore = 0;
+void loadScore() {
+    string filename = "hs_" + to_string(mode) + ".txt";
+    ifstream f(filename);
+    if(f >> highscore) f.close();
+    else highscore = 0;
+}
+
+void saveScore(int current) {
+    if(current > highscore) {
+        string filename = "hs_" + to_string(mode) + ".txt";
+        ofstream f(filename);
+        f << current;
+        f.close();
+        cout << "\nNEW HIGH SCORE!";
+    }
+}
 //if this needs to be submitted
 //1. file input and output (highscore for each mode)
 //2. menu (should be fine)
@@ -23,7 +58,7 @@ char userput=' '; //accepted input
 char bor=' '; //input buffer
 char validput[5]= {' ','w','a','s','d'}; //input list
 int mode=0; //gamemode 0:easy 1:medium 2:hard
-char blocks[99]= {' ','$','X','O','T'};//symbols shown
+cchar blocks[99]= {' ', 'O', '#', 'o'};//symbols shown
 struct boardstruct {
 	char display;
 	int status[3]; //condition,in,out
@@ -99,16 +134,21 @@ void setboard() { //reset the board
 	pelletdrop();
 }
 
-void shootboard() { // print the board
-	fullboard="";
-	for(int i=0; i<21; i++) {
-		for (int j=0; j<21; j++) {
-			fullboard+=blocks[biowaste[i][j].status[0]];
-			fullboard+=" ";
-		}
-		fullboard+="\n";
-	}
-	cout<<fullboard<<head[0]<<head[1];
+void shootboard() { 
+    fullboard = "";
+    for(int i=0; i<21; i++) {
+        for (int j=0; j<21; j++) {
+            // If this coordinate is the head, use a different symbol
+            if (i == head[0] && j == head[1]) {
+                fullboard += "@ "; 
+            } else {
+                fullboard += blocks[biowaste[i][j].status[0]];
+                fullboard += " ";
+            }
+        }
+        fullboard += "\n";
+    }
+    cout << fullboard << "Score: " << snakey.size() - 1;
 }
 
 
@@ -158,7 +198,13 @@ void abalode() { //timed fuction, detect, update and mkove snake
 }
 
 int main() {
-	//input file here
+	cout << "SNAKE GAME\n0: Easy (Loop)\n1: Medium (Normal)\n2: Hard (Fast)\nSelect Mode: ";
+	cin >> mode;
+	loadScore();
+	clearformat();
+
+	cout << "Mode: " << mode << " | High Score: " << highscore << endl;
+	cout << "Press WASD to start...";
 	cout<<"ready for snake game? (wasd to turn snake)"; //menu here
 	inputstyle();
 	thread navi(abalode);
