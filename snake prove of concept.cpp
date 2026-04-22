@@ -3,7 +3,6 @@
 #include <thread> //seperate time
 #include <string> //idk
 #include <cstring> //idk
-#include <conio.h> //enterless input
 #include <stdio.h> //idk
 #include <list> //flexable
 #include <stdlib.h> //randomness
@@ -25,7 +24,12 @@ char getcha() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	return ch;
 }
+#elif _WIN32 
+	#include <conio.h>
+#elif _WIN64
+	#include <conio.h>
 #endif
+//enterless input
 
 
 //if this needs to be submitted
@@ -91,7 +95,9 @@ bool deathdetect() { //death detection
 }
 
 void clearformat() { //this actually still doesnt work on linux because getch
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32 
+	system("cls");
+#elif _WIN64
 	system("cls");
 #elif __linux__
 	system("clear");
@@ -101,7 +107,9 @@ void clearformat() { //this actually still doesnt work on linux because getch
 }
 
 void inputstyle() {
-#ifdef _WIN32 || _WIN64
+#ifdef _WIN32 
+	bor=getch();
+#elif _WIN64
 	bor=getch();
 #elif __linux__
 	bor=getcha();
@@ -137,22 +145,19 @@ void setboard() { //reset the board
 
 void shootboard() {
 	fullboard = "";
+	if (loopin) {
+		fullboard+="Score: ";
+		fullboard+=to_string(snakey.size() - 1);
+		fullboard+="\n";
+	}
 	for(int i=0; i<21; i++) {
 		for (int j=0; j<21; j++) {
-			// If this coordinate is the head, use a different symbol
-			if (i == head[0] && j == head[1]) {
-				fullboard += "@ ";
-			} else {
 				fullboard += blocks[biowaste[i][j].status];
 				fullboard += " ";
-			}
 		}
 		fullboard += "\n";
 	}
-	cout << fullboard;
-	if (loopin) {
-		cout<< "Score: " << snakey.size() - 1;
-	}
+	cout << fullboard;	
 }
 
 
@@ -160,8 +165,8 @@ void shootboard() {
 void abalode() { //timed fuction, detect, update and mkove snake
 	while(loopin) {
 		this_thread::sleep_for(paustime);
-		clearformat();
-		//printf("\033[H\033[J"); //this is very smooth (do see if it is usable)
+		//clearformat();
+		cout<<"\033[H\033[J"; //this is very smooth 
 		biowaste[head[0]][head[1]].status=3;
 		if (userput=='w') {
 			head[0]--;
@@ -205,6 +210,8 @@ void abalode() { //timed fuction, detect, update and mkove snake
 }
 
 int main() {
+	//clearformat();
+	cout<<"\033[H\033[J";
 	while(bor!='y') {
 		cout << "WELCOME TO SNAKE GAME\n[0]: Easy (Loop)\n[1]: Medium (Normal)\n[2]: Hard (Fast)\nSelect Mode Number: ";
 		do {
@@ -212,7 +219,8 @@ int main() {
 		} while(bor>'2' or bor<'0');
 		mode=bor-'0';
 		loadScore();
-		clearformat();
+		//clearformat();
+		cout<<"\033[H\033[J";
 		cout << "Mode: " << mode << " | High Score: " << highscore << endl;
 		cout << "Press WASD to direct the snake's movement\nBegin? [y/n]";
 		do {
