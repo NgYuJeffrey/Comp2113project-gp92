@@ -9,24 +9,43 @@
 #include <stdlib.h> //randomness
 using namespace std;
 
+#include <fstream> // Part 1: File IO
+#if __linux__
+#include <termios.h>
+#include <unistd.h>
+// Custom getch for Linux
+char getcha() {
+	struct termios oldt, newt;
+	char ch;
+	tcgetattr(STDIN_FILENO, &oldt);
+	newt = oldt;
+	newt.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+	ch = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+	return ch;
+}
+#endif
+
+
 //if this needs to be submitted
-//1. file input and output (highscore for each mode)
-//2. menu (should be fine)
-// -----------------------------
-//3. difficulty setting (easy:wall looping / hard:accleration) done
-//4. linux compatability (fuckkkkk)
-//4.5. optimization of snake body presentation (optional)(it'll look better)
+//1. file input and output (highscore for each mode) done
+//2. linux compatability (yayyyy)
+//3. optimization of snake body presentation (optional)(it'll look better)
 //------------------------------
-//5. seperation of files (i hate makefile) (save a few days for this)
-//6. comments for each section of code
+//4. seperation of files (i hate makefile) (save a few days for this)
+//5. comments for each section of code
+//------------------------------
+//6. README
+//7. demo vid
 char userput=' '; //accepted input
 char bor=' '; //input buffer
 char validput[5]= {' ','w','a','s','d'}; //input list
 int mode=0; //gamemode 0:easy 1:medium 2:hard
-char blocks[99]= {' ','$','X','O','T'};//symbols shown
+char blocks[99]= {' ', '$', '#', 'o','@','.'};//symbols shown
 struct boardstruct {
 	char display;
-	int status[3]; //condition,in,out
+	int status; //condition,in,out
 };
 boardstruct biowaste[21][21];//board
 int head[2]= {10,10};//snake head location
@@ -43,14 +62,31 @@ list<snakelike> snakey; //snake
 string fullboard; //printing buffer, smoother graphics
 std::chrono::milliseconds paustime=100ms; //pause time
 int dirgate=2; //banned direction (0:updown 1:leftright)
-bool loopin=true; // im going to be so fr this detection is subpar
+bool loopin=true; // works for some reason and i aint gonna question it
 
+int highscore = 0;
+void loadScore() { //load score from file
+	string filename = "hs_" + to_string(mode) + ".txt";
+	ifstream f(filename);
+	if(f >> highscore) f.close();
+	else highscore = 0;
+}
+
+void saveScore(int current) { //save score into file
+	if(current > highscore) {
+		string filename = "hs_" + to_string(mode) + ".txt";
+		ofstream f(filename);
+		f << current;
+		f.close();
+		cout << "\nNEW HIGH SCORE!";
+	}
+}
 
 bool deathdetect() { //death detection
 	if(mode!=0) {
-		return biowaste[head[0]][head[1]].status[0]<=1;
+		return biowaste[head[0]][head[1]].status<=1;
 	} else {
-		return biowaste[head[0]][head[1]].status[0]<=2;
+		return biowaste[head[0]][head[1]].status<=2;
 	}
 }
 
@@ -64,11 +100,11 @@ void clearformat() { //this actually still doesnt work on linux because getch
 #endif
 }
 
-void inputstyle(){
+void inputstyle() {
 #ifdef _WIN32 || _WIN64
 	bor=getch();
 #elif __linux__
-	cin>>bor;
+	bor=getcha();
 #else
 	cout<<"imcompatable";
 #endif
@@ -82,33 +118,41 @@ void pelletdrop() { // spawn pellet on blank space
 	do {
 		pelletx=(rand() % 19)+1;
 		pellety=(rand() % 19)+1;
-	} while (biowaste[pellety][pelletx].status[0]!=0);
-	biowaste[pellety][pelletx].status[0]=1;
+	} while (biowaste[pellety][pelletx].status!=0);
+	biowaste[pellety][pelletx].status=1;
 }
 
 void setboard() { //reset the board
 	for(int i=0; i<21; i++) {
 		for (int j=0; j<21; j++) {
 			if (i*j*(20-i)*(20-j)==0) {
-				biowaste[i][j].status[0]=2;
+				biowaste[i][j].status=2;
 			} else {
-				biowaste[i][j].status[0]=0;
+				biowaste[i][j].status=0;
 			}
 		}
 	}
 	pelletdrop();
 }
 
-void shootboard() { // print the board
-	fullboard="";
+void shootboard() {
+	fullboard = "";
 	for(int i=0; i<21; i++) {
 		for (int j=0; j<21; j++) {
-			fullboard+=blocks[biowaste[i][j].status[0]];
-			fullboard+=" ";
+			// If this coordinate is the head, use a different symbol
+			if (i == head[0] && j == head[1]) {
+				fullboard += "@ ";
+			} else {
+				fullboard += blocks[biowaste[i][j].status];
+				fullboard += " ";
+			}
 		}
-		fullboard+="\n";
+		fullboard += "\n";
 	}
-	cout<<fullboard<<head[0]<<head[1];
+	cout << fullboard;
+	if (loopin) {
+		cout<< "Score: " << snakey.size() - 1;
+	}
 }
 
 
@@ -117,6 +161,8 @@ void abalode() { //timed fuction, detect, update and mkove snake
 	while(loopin) {
 		this_thread::sleep_for(paustime);
 		clearformat();
+		//printf("\033[H\033[J"); //this is very smooth (do see if it is usable)
+		biowaste[head[0]][head[1]].status=3;
 		if (userput=='w') {
 			head[0]--;
 			dirgate=1;
@@ -130,7 +176,7 @@ void abalode() { //timed fuction, detect, update and mkove snake
 			head[1]++;
 			dirgate=0;
 		} //i am sure there is a better way for this
-		if(biowaste[head[0]][head[1]].status[0]==2 and mode==0) {
+		if(biowaste[head[0]][head[1]].status==2 and mode==0) {
 			for(int i=0; i<=1; i++) {
 				if (head[i]==0) {
 					head[i]=19;
@@ -138,19 +184,20 @@ void abalode() { //timed fuction, detect, update and mkove snake
 					head[i]=1;
 				}
 			}
-		} 
-		if (biowaste[head[0]][head[1]].status[0]==1) {
+		}//easy mode loop the border
+		if (biowaste[head[0]][head[1]].status==1) {
 			pelletdrop();
 			if ((snakey.size())%2==1 and mode==2) {
 				paustime-=10ms;
-			}
+			}//hard mode time decrease
 		} else {
-			biowaste[snakey.back().cordy][snakey.back().cordx].status[0]=0;
+			biowaste[snakey.back().cordy][snakey.back().cordx].status=0;
 			snakey.pop_back();
-		}
+		}//usual moving
 		snakey.push_front(snakelike(head[1],head[0]));
 		loopin=deathdetect();
-		biowaste[head[0]][head[1]].status[0]=3;
+		biowaste[snakey.back().cordy][snakey.back().cordx].status=5;
+		biowaste[head[0]][head[1]].status=4;
 		shootboard();
 	}
 	cout<<"Your score is: "<<snakey.size()-1<<"\nPress any button to continue";
@@ -158,9 +205,21 @@ void abalode() { //timed fuction, detect, update and mkove snake
 }
 
 int main() {
-	//input file here
-	cout<<"ready for snake game? (wasd to turn snake)"; //menu here
-	inputstyle();
+	while(bor!='y') {
+		cout << "WELCOME TO SNAKE GAME\n[0]: Easy (Loop)\n[1]: Medium (Normal)\n[2]: Hard (Fast)\nSelect Mode Number: ";
+		do {
+			inputstyle();
+		} while(bor>'2' or bor<'0');
+		mode=bor-'0';
+		loadScore();
+		clearformat();
+		cout << "Mode: " << mode << " | High Score: " << highscore << endl;
+		cout << "Press WASD to direct the snake's movement\nBegin? [y/n]";
+		do {
+			inputstyle();
+		} while(bor!='y' and bor!='n');
+		clearformat();
+	}
 	thread navi(abalode);
 	navi.detach(); //automoves
 	setboard();
@@ -174,6 +233,6 @@ int main() {
 			}
 		}
 	} // read user input
-	//output file here
+	saveScore(snakey.size()-1);
 	return 0;
 }
