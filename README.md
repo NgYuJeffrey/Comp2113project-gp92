@@ -16,7 +16,7 @@ Below is an explanation of how our project satisfies the five core coding requir
 2. **Data Structures:** - We use a `std::list<snakelike>` to store the snake's segments, allowing for efficient $O(1)$ insertions at the head and deletions at the tail. 
    - A 2D array of `boardstruct` objects represents the game grid.
 3. **Dynamic Memory Management:** - The `std::list` container dynamically allocates memory for each new snake segment (node) on the heap as the snake grows.
-4. **File Input/Output:** - The game uses `std::ifstream` and `std::ofstream` to manage a `highscores.txt` file. It tracks and persists the best scores for Easy, Medium, and Hard modes separately.
+4. **File Input/Output:** - The game uses `std::ifstream` and `std::ofstream` to manage a `hs_snake.txt` file. It tracks and persists the best scores for Easy, Medium, and Hard modes respectively.
 5. **Program Codes in Multiple Files:** - The project is split into `main.cpp` (interface/input), `logic.cpp` (game mechanics), and `snake.h` (shared structures and globals).
 
 ## Game Modes (Difficulty Levels)
