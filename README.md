@@ -4,7 +4,7 @@
 
 ## Team Members
 * **Member 1:** Tianjian Huang - 3036515958
-* **Member 2:** NgYu Jeffery - [UID]
+* **Member 2:** NgYu Jeffery - 3036588486
 
 ## Application Description
 This is a high-performance, text-based Snake game designed for the Linux terminal. The game features real-time movement using multi-threading, persistent high-score tracking, and three distinct difficulty modes that alter the game's physics and logic.
