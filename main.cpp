@@ -32,17 +32,7 @@ void clearformat() {
 
 int main() {
     clearformat();
-    while (bor != 'y') {
-        cout << "WELCOME TO SNAKE GAME\n[0]: Easy\n[1]: Medium\n[2]: Hard\nSelect Mode: ";
-        do { inputstyle(); } while (bor > '2' || bor < '0');
-        mode = bor - '0';
-        loadScore();
-        clearformat();
-        cout << "Mode: " << mode << " | High Score: " << highscore << endl;
-        cout << "Press WASD to move. Begin? [y/n]";
-        do { inputstyle(); } while (bor != 'y' && bor != 'n');
-    }
-
+    mainmenu();
     setboard();
     snakey.push_front(snakelike(head[1], head[0]));
     userput = 'd'; // Initial direction
@@ -55,13 +45,18 @@ int main() {
         for (int i = 1; i < 5; i++) {
             if (bor == validput[i] && i % 2 != dirgate) {
                 userput = bor;
-                dirgate = (i <= 2) ? 1 : 0;
+                dirgate = i%2;
             }
         }
     }
 
     if (navi.joinable()) navi.join();
-    saveScore(snakey.size() - 1);
     cout << "\nFinal Score: " << snakey.size() - 1 << "\nGame Over.\n";
+    if (snakey.size()-highscore[mode]>1) {
+		highscore[mode]=snakey.size()-1;
+		saveScore(4);
+		cout << "\nNEW HIGH SCORE!";
+	}
+    
     return 0;
 }
