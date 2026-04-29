@@ -37,11 +37,12 @@ extern string fullboard;
 extern std::chrono::milliseconds paustime;
 extern int dirgate;
 extern bool loopin;
-extern int highscore;
+extern int highscore[3];
+extern string intro[3];
 
 // Function Prototypes
 void loadScore();
-void saveScore(int current);
+void saveScore(int mode);
 bool deathdetect();
 void clearformat();
 void inputstyle();
@@ -49,6 +50,8 @@ void pelletdrop();
 void setboard();
 void shootboard();
 void abalode();
+void mainmenu();
+void delscoremenu();
 char getcha(); // Linux specific input
 
 #endif
