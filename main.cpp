@@ -5,7 +5,7 @@
 #else
     #include <termios.h>
     #include <unistd.h>
-    char getcha() {
+    char getcha() { // custom getch() function for linux
         struct termios oldt, newt;
         char ch;
         tcgetattr(STDIN_FILENO, &oldt);
@@ -18,7 +18,7 @@
     }
 #endif
 
-void inputstyle() {
+void inputstyle() { // picking getch() function based on operation system | input: operation system | output: compatable getch() function
 #if defined(_WIN32) || defined(_WIN64)
     bor = getch();
 #else
@@ -40,7 +40,7 @@ int main() {
 
     thread navi(abalode);
 
-    while (loopin) {
+    while (loopin) { // grab valid user input | input: user input | output: valid user input
         inputstyle();
         for (int i = 1; i < 5; i++) {
             if (bor == validput[i] && i % 2 != dirgate) {
