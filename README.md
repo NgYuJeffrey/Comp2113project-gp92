@@ -1,56 +1,35 @@
 # Comp2113project-gp92
 
-Text-Based Snake (HKU COMP2113 Project)
-Team Members
-Name: [Your Name]
+# Text-Based Snake Game (C++)
 
-UID: [Your UID]
+## Team Members
+* **Member 1:** Tianjian Huang - 3036515958
+* **Member 2:** NgYu Jeffery - 3036588486
 
-GitHub Username: [Your Username]
+## Application Description
+This is a high-performance, text-based Snake game designed for the Linux terminal. The game features real-time movement using multi-threading, persistent high-score tracking, and three distinct difficulty modes that alter the game's physics and logic.
 
-Application Description
-This is a real-time, terminal-based Snake game implemented in C++. The game features a multi-threaded architecture that allows the snake to move independently while the user provides input via "enterless" key presses. It includes three distinct difficulty modes, high-score persistence, and smooth terminal rendering using ANSI escape codes.
+## Features & Coding Requirements
+Below is an explanation of how our project satisfies the five core coding requirements:
 
-Game Features
-Easy Mode (0): Borderless gameplay. The snake loops through walls and reappears on the opposite side.
+1. **Generation of Random Events:** - The `pelletdrop()` function utilizes `srand(time(0))` to generate random coordinates for food spawning, ensuring that pellets never overlap with the snake's body or walls.
+2. **Data Structures:** - We use a `std::list<snakelike>` to store the snake's segments, allowing for efficient $O(1)$ insertions at the head and deletions at the tail. 
+   - A 2D array of `boardstruct` objects represents the game grid.
+3. **Dynamic Memory Management:** - The `std::list` container dynamically allocates memory for each new snake segment (node) on the heap as the snake grows.
+4. **File Input/Output:** - The game uses `std::ifstream` and `std::ofstream` to manage a `hs_snake.txt` file. It tracks and persists the best scores for Easy, Medium, and Hard modes respectively.
+5. **Program Codes in Multiple Files:** - The project is split into `main.cpp` (interface/input), `logic.cpp` (game mechanics), and `snake.h` (shared structures and globals).
 
-Medium Mode (1): Traditional gameplay. Hitting walls results in an immediate game over.
+## Game Modes (Difficulty Levels)
+* **Easy:** Features "Wall Looping." Hitting a boundary teleports the snake to the opposite side.
+* **Medium:** Standard gameplay. Hitting walls results in instant death.
+* **Hard:** Acceleration mode. The game speed increases every time the snake eats a pellet.
 
-Hard Mode (2): Acceleration mode. The game speed increases significantly every time the snake eats a pellet.
+## Non-Standard Libraries
+* **termios.h / unistd.h:** Used to implement a non-blocking `getch()` function for Linux terminal compatibility, allowing real-time input without pressing 'Enter'.
 
-High Score System: Scores are saved to separate files based on the chosen difficulty mode.
-
-Smooth Graphics: Uses \033[H\033[J buffer clearing to prevent screen flickering in the Linux terminal.
-
-Coding Requirements Mapping
-This project satisfies the five core coding requirements as follows:
-
-Generation of Random Events: * Found in logic.cpp: The pelletdrop() function uses srand(time(0)) and a do-while loop to randomly spawn food only on empty tiles.
-
-Data Structures for Storing Data: * Found in snake.h: We use a std::list<snakelike> to store snake segments for efficient head/tail manipulation and a 2D array of boardstruct for the game grid.
-
-Dynamic Memory Management: * The std::list container dynamically allocates memory on the heap for every new snakelike node added when the snake eats a pellet.
-
-File Input/Output: * Found in logic.cpp: Functions loadScore() and saveScore() use ifstream and ofstream to read/write persistent high scores to files like hs_0.txt.
-
-Program Codes in Multiple Files: * The project is split into main.cpp (input/menu), logic.cpp (gameplay mechanics), and snake.h (definitions), compiled via a Makefile.
-
-Non-Standard Libraries
-<termios.h> & <unistd.h>: Used in the getcha() function to disable canonical mode in the Linux terminal. This allows the game to detect W, A, S, D keys instantly without the user having to press Enter.
-
-<thread>: Used to separate the movement logic (abalode) from the input listener, enabling real-time gameplay.
-
-Compilation and Execution Instructions
-To Compile: Navigate to the project directory and run:
-
-Bash
-make
-To Run: Execute the generated binary:
-
-Bash
-./snake_game
-To Reset:
-To remove object files and the executable:
-
-Bash
-make clean
+## Compilation and Execution Instructions
+To compile and run the game on the CS Academy server:
+1. Open the terminal in the project directory.
+2. Run `make` to build the executable.
+3. Run `./snake_game` to start.
+4. (Optional) Run `make clean` to remove compiled objects.
