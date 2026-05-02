@@ -7,7 +7,7 @@
 * **Member 2:** NgYu Jeffery - 3036588486
 
 ## Application Description
-This is a high-performance, text-based Snake game designed for the Linux terminal. The game features real-time movement using multi-threading, persistent high-score tracking, and three distinct difficulty modes that alter the game's physics and logic.
+This is a text-based Snake game designed for Linux and Windows. The game features real-time movement, high-score tracking, and three difficulty modes that alter the game's rules.
 
 ## Features & Coding Requirements
 Below is an explanation of how our project satisfies the five core coding requirements:
@@ -20,9 +20,9 @@ Below is an explanation of how our project satisfies the five core coding requir
 5. **Program Codes in Multiple Files:** - The project is split into `main.cpp` (interface/input), `logic.cpp` (game mechanics), and `snake.h` (shared structures and globals).
 
 ## Game Modes (Difficulty Levels)
-* **Easy:** Features "Wall Looping." Hitting a boundary teleports the snake to the opposite side.
-* **Medium:** Standard gameplay. Hitting walls results in instant death.
-* **Hard:** Acceleration mode. The game speed increases every time the snake eats a pellet.
+* **Easy:** Hitting a wall teleports the snake to the opposite side instead.
+* **Medium:** Standard gameplay. Hitting walls or the snake body results to death.
+* **Hard:** The game speed increases every second time the snake eats a pellet.
 
 ## Non-Standard Libraries
 * **termios.h / unistd.h:** Used to implement a non-blocking `getch()` function for Linux terminal compatibility, allowing real-time input without pressing 'Enter'.
