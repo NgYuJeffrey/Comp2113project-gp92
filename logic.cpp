@@ -16,7 +16,7 @@ bool loopin = true;
 int highscore[3] = {0,0,0};
 string intro[3]= {"The snake will go to the oppositde side of the board when touching the wall instead of dying","Classic game of snake, eat as many pellets as you can and don't bump into the wall or yourself!","The snake moves faster for every second pellet it eats"};
 
-void saveScore(int mode) { //save score into file
+void saveScore(int mode) { //save scores into file | input: mode (0-2: clearing specific highscore / 3: clearing  all highscore / 4:update new highscore) | output: highscore storing file update
 	string filename = "hs_snake.txt";
 	ofstream f(filename);
 	for(int i=0; i<3; i++) {
@@ -29,7 +29,7 @@ void saveScore(int mode) { //save score into file
 	f.close();
 }
 
-void loadScore() { //load score from file
+void loadScore() { //loads score from file | output: stored highscore
 	string filename = "hs_snake.txt";
 	ifstream f(filename);
 	string topscore;
@@ -49,12 +49,12 @@ void loadScore() { //load score from file
 }
 
 
-bool deathdetect() {
+bool deathdetect() { //actual detection boolen | input: snake head status, mode | output: whether snake has touched lethal object
 	if (mode != 0) return biowaste[head[0]][head[1]].status <= 1;
 	return biowaste[head[0]][head[1]].status <= 2;
 }
 
-void pelletdrop() {
+void pelletdrop() { //randomly place a pellet on a empty space | input: board status
 	srand(time(0));
 	int px, py;
 	do {
@@ -64,7 +64,7 @@ void pelletdrop() {
 	biowaste[py][px].status = 1;
 }
 
-void setboard() {
+void setboard() { //set the board into default status | output: default board status
 	for (int i = 0; i < 21; i++) {
 		for (int j = 0; j < 21; j++) {
 			biowaste[i][j].status = (i * j * (20 - i) * (20 - j) == 0) ? 2 : 0;
@@ -73,7 +73,7 @@ void setboard() {
 	pelletdrop();
 }
 
-void shootboard() {
+void shootboard() { //print the board | output: current board view, current score
 	fullboard = "";
 	if (loopin) {
 		fullboard += "Score: " + to_string(snakey.size() - 1) + "\n";
@@ -89,7 +89,7 @@ void shootboard() {
 	cout <<fullboard;
 }
 
-void abalode() {
+void abalode() { //main gameplay loop and detection system | input: user control input | output: various gameplay funcrtions calling
 	while (loopin) {
 		this_thread::sleep_for(paustime);
 		biowaste[head[0]][head[1]].status = 3;
@@ -124,7 +124,7 @@ void abalode() {
 	}
 }
 
-void delscoremenu() {
+void delscoremenu() { // menu for high score deletion | input: user character input | output: call function to clear highscore
 	clearformat();
 	cout<<"Select the score you wish to be deleted\n[0] Easy\n[1] Normal\n[2] Hard\n[3] All\n[4] Quit\n";
 	do {
@@ -152,7 +152,7 @@ void delscoremenu() {
 	return;
 }
 
-void mainmenu() {
+void mainmenu() { // main menu of the game | input: user character input | output: calling game with gamemode or highscore reset menu
 	while (bor != 'y') {
 		clearformat();
 		cout << "WELCOME TO SNAKE GAME\n[0]: Easy\n[1]: Medium\n[2]: Hard\n[3]: Clear Highscore\nSelect Mode: ";
