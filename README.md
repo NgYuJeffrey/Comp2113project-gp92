@@ -10,6 +10,7 @@
 This is a text-based Snake game designed for Linux and Windows. The game features real-time movement, high-score tracking, and three difficulty modes that alter the game's rules.
 
 ## Features & Coding Requirements
+The final separated files used for the game are in the separated files branch.
 Below is an explanation of how our project satisfies the five core coding requirements:
 
 1. **Generation of Random Events:** - The `pelletdrop()` function utilizes `srand(time(0))` to generate random coordinates for food spawning, ensuring that pellets never overlap with the snake's body or walls.
