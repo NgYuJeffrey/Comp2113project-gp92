@@ -14,6 +14,7 @@ std::chrono::milliseconds paustime = 100ms;
 int dirgate = 2;
 bool loopin = true;
 int highscore[3] = {0,0,0};
+int score=0;
 string intro[3]= {"The snake will go to the oppositde side of the board when touching the wall instead of dying","Classic game of snake, eat as many pellets as you can and don't bump into the wall or yourself!","The snake moves faster for every second pellet it eats"};
 
 void saveScore(int mode) { //save scores into file | input: mode (0-2: clearing specific highscore / 3: clearing  all highscore / 4:update new highscore) | output: highscore storing file update
@@ -42,7 +43,7 @@ void loadScore() { //loads score from file | output: stored highscore
 			f.close();
 			saveScore(3);
 			loadScore();
-			break;
+			return;
 		}
 	}
 	f.close();
@@ -94,10 +95,14 @@ void abalode() { //main gameplay loop and detection system | input: user control
 		this_thread::sleep_for(paustime);
 		biowaste[head[0]][head[1]].status = 3;
 
+		for (int i = 1; i < 5; i++) {
+			if (userput == validput[i]) dirgate = i%2;
+		}
 		if (userput == 'w') head[0]--;
 		else if (userput == 's') head[0]++;
 		else if (userput == 'a') head[1]--;
 		else if (userput == 'd') head[1]++;
+
 
 		if (biowaste[head[0]][head[1]].status == 2 && mode == 0) {
 			if (head[0] == 0) head[0] = 19;
@@ -107,6 +112,7 @@ void abalode() { //main gameplay loop and detection system | input: user control
 		}
 
 		if (biowaste[head[0]][head[1]].status == 1) {
+			score++;
 			pelletdrop();
 			if ((snakey.size()) % 2 == 0 && mode == 2 && paustime > 30ms) {
 				paustime -= 10ms;
@@ -156,18 +162,23 @@ void mainmenu() { // main menu of the game | input: user character input | outpu
 	while (bor != 'y') {
 		clearformat();
 		cout << "WELCOME TO SNAKE GAME\n[0]: Easy\n[1]: Medium\n[2]: Hard\n[3]: Clear Highscore\nSelect Mode: ";
-		do {inputstyle();} while (bor > '3' || bor < '0');
+		do {
+			inputstyle();
+		} while (bor > '3' || bor < '0');
 		mode = bor - '0';
 		loadScore();
 		clearformat();
 		if(bor!='3') {
 			cout << "Mode: " << mode << " | High Score: " << highscore[mode] << endl<<intro[mode]<<endl;
 			cout << "Press WASD to move. Begin? [y/n]";
-			do {inputstyle();} while (bor != 'y' && bor != 'n');
+			do {
+				inputstyle();
+			} while (bor != 'y' && bor != 'n');
 		} else {
 			delscoremenu();
 		}
 	}
 	return;
 }
+
 
