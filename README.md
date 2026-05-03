@@ -7,7 +7,9 @@
 * **Member 2:** NgYu Jeffery - 3036588486
 
 ## Application Description
-This is a high-performance, text-based Snake game designed for the Linux terminal. The game features real-time movement using multi-threading, persistent high-score tracking, and three distinct difficulty modes that alter the game's physics and logic.
+This is a text-based Snake game designed for the Linux terminal. The game features real-time movement using multi-threading, persistent high-score tracking, and three distinct difficulty modes that alter the game's physics and logic.
+
+# The final separated files used for the game are in the separated files branch.
 
 ## Features & Coding Requirements
 Below is an explanation of how our project satisfies the five core coding requirements:
