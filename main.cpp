@@ -45,17 +45,16 @@ int main() {
         for (int i = 1; i < 5; i++) {
             if (bor == validput[i] && i % 2 != dirgate) {
                 userput = bor;
-                dirgate = i%2;
             }
         }
     }
 
     if (navi.joinable()) navi.join();
-    cout << "\nFinal Score: " << snakey.size() - 1 << "\nGame Over.\n";
-    if (snakey.size()-highscore[mode]>1) {
-		highscore[mode]=snakey.size()-1;
-		saveScore(4);
+    cout << "\nFinal Score: " << score << "\nGame Over.\n";
+    if (score>highscore[mode]) {
+		highscore[mode]=score;
 		cout << "\nNEW HIGH SCORE!";
+		saveScore(4);
 	}
     
     return 0;
