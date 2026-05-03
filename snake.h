@@ -39,6 +39,7 @@ extern int dirgate;
 extern bool loopin;
 extern int highscore[3];
 extern string intro[3];
+extern int score;
 
 // Function Prototypes
 void loadScore();
